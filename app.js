@@ -1,6 +1,7 @@
 const express = require("express"); //importou a classe
 const sqlite3 = require("sqlite3");
 const bodyParser = require("body-parser"); //importa o body-parser
+const { render } = require("ejs");
 
 const port = 8000; // porta TCP do servidor HTTP da aplicação
 
@@ -42,18 +43,18 @@ const cadastro = 'vc está na página "Cadastro"<br><a href="/">Voltar</a>';
 app.get("/", (req, res) => {
   // res.send(Home);
   console.log("GET /index");
-  res.render("index");
+  res.render("pages/index");
   // res.redirect("/cadastro"); // Redireciona para a ROTA cadastro
 });
 
 app.get("/sobre", (req, res) => {
   console.log("GET /sobre");
-  res.render("sobre");
+  res.render("pages/sobre");
 });
 
 app.get("/login", (req, res) => {
   console.log("GET /login");
-  res.render("login");
+  res.render("pages/login");
 });
 
 app.post("/login", (req, res) => {
@@ -63,14 +64,14 @@ app.post("/login", (req, res) => {
 
 app.get("/cadastro", (req, res) => {
   console.log("GET /cadastro");
-  res.render("cadastro");
+  res.render("pages/cadastro");
 });
 
 app.get("/usuarios", (req, res) => {
   const query = "SELECT * FROM users";
   db.all(query, (err, row) => {
     console.log(`GET /usuarios ${JSON.stringify(row)}`);
-    res.render("usertable");
+    res.render("pages/usertable");
   });
 });
 
@@ -109,6 +110,11 @@ app.post("/cadastro", (req, res) => {
       );
     }
   });
+});
+
+app.get("/dashboard" , (req, res) => {
+  console.log("GET /dashboard");
+  res.render("pages/dashboard");
 });
 //app.listen() deve ser o último comando da aplicação (app.js)
 app.listen(port, () => {
