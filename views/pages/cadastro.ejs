@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <%-include("head"); %>
+  <%-include("../partials/head"); %>
   <body>
-    <%- include("menu") %>
+
+    <div class= "container_rain">
+      <span class="cloud"></span>
+      <span class="cloud"></span>
+      <span class="cloud"></span>
+      <span class="cloud"></span>
+    </div>
+
+    <%- include("../partials/menu") %>
     <section class="container">
       <div class="image_container">
         <h1>Crie sua conta</h1>
@@ -55,6 +63,6 @@
         </div>
       </form>
     </section>
-    <%- include("rodape") %>
+    <%- include("../partials/rodape") %>
   </body>
 </html>

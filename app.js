@@ -1,11 +1,12 @@
 const express = require("express"); //importou a classe
 const sqlite3 = require("sqlite3");
 const bodyParser = require("body-parser"); //importa o body-parser
-const { render } = require("ejs");
+
+const app = express();
 
 const port = 8000; // porta TCP do servidor HTTP da aplicação
 
-const app = express(); //Instância para o uso do Express
+let config = { titulo: "", rodape: "" }; //Instância para o uso do Express
 
 // Cria conexão com o banco de dados
 const db = new sqlite3.Database("user.db"); //Instâcia para uso do Sqlite3, e usa o arquivo 'user.db'
@@ -23,6 +24,7 @@ db.serialize(() => {
 // Aqui será acrescentado uma rota "/static" para a pasta __dirname + "/static"
 // O app.use é usado para acrescentar rotas novas para o Express gerenciar e pode usar
 // Middleware para isto, que neste caso é o express.static que gerencia rotas estaticas
+
 app.use("/static", express.static(__dirname + "/static"));
 
 // MIddleware para processar as requisições do Body Parameters do cliente
@@ -43,18 +45,21 @@ const cadastro = 'vc está na página "Cadastro"<br><a href="/">Voltar</a>';
 app.get("/", (req, res) => {
   // res.send(Home);
   console.log("GET /index");
-  res.render("pages/index");
+  config = { titulo: "blog da turma I2HNA -SESI Nova Odessa", rodape: "" }
+  res.render("pages/index", config)
   // res.redirect("/cadastro"); // Redireciona para a ROTA cadastro
 });
 
 app.get("/sobre", (req, res) => {
   console.log("GET /sobre");
-  res.render("pages/sobre");
+  config = { titulo: "blog da turma I2HNA -SESI Nova Odessa", rodape: "" }
+  res.render("pages/sobre", config)
 });
 
 app.get("/login", (req, res) => {
   console.log("GET /login");
-  res.render("pages/login");
+  config = { titulo: "blog da turma I2HNA -SESI Nova Odessa", rodape: "" }
+  res.render("pages/login", config)
 });
 
 app.post("/login", (req, res) => {
@@ -64,14 +69,15 @@ app.post("/login", (req, res) => {
 
 app.get("/cadastro", (req, res) => {
   console.log("GET /cadastro");
-  res.render("pages/cadastro");
+  config = { titulo: "blog da turma I2HNA -SESI Nova Odessa", rodape: "" }
+  res.render("pages/cadastro", config)
 });
 
 app.get("/usuarios", (req, res) => {
   const query = "SELECT * FROM users";
   db.all(query, (err, row) => {
     console.log(`GET /usuarios ${JSON.stringify(row)}`);
-    res.render("pages/usertable");
+    res.render("pages/usertable", config);
   });
 });
 
@@ -112,9 +118,9 @@ app.post("/cadastro", (req, res) => {
   });
 });
 
-app.get("/dashboard" , (req, res) => {
+app.get("/dashboard", (req, res) => {
   console.log("GET /dashboard");
-  res.render("pages/dashboard");
+  res.render("pages/dashboard", config);
 });
 //app.listen() deve ser o último comando da aplicação (app.js)
 app.listen(port, () => {
