@@ -1,6 +1,7 @@
 const express = require("express"); //importou a classe
 const sqlite3 = require("sqlite3");
 const bodyParser = require("body-parser"); //importa o body-parser
+const session = require("express-session");
 
 const app = express();
 
@@ -17,6 +18,14 @@ db.serialize(() => {
     `CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, email TEXT, celular TEXT, cpf TEXT, rg TEXT)`
   );
 });
+
+app.use(
+  session({
+    secret: "qualquersenha",
+    resave: true,
+    saveUninitialized: true,
+  })
+)
 
 // __dirname é a variavel interna do nodejs que guarda o caminho absolute do projeto, no SO
 // console.log(__dirname + "/static");
@@ -40,7 +49,7 @@ const Login = 'vc está na página "Login"<br><a href="/">Voltar</a>';
 const cadastro = 'vc está na página "Cadastro"<br><a href="/">Voltar</a>';
 
 // Metodo express. get necessita de dois parâmetros
-//Na ARROW FUNCTION, O primeiro são dados do servidor (REQUISITION - 'req')
+// Na ARROW FUNCTION, O primeiro são dados do servidor (REQUISITION - 'req')
 // o segundo sao os dados que serao enviados ao cliente (result - 'res')
 app.get("/", (req, res) => {
   // res.send(Home);
@@ -64,8 +73,27 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   console.log("POST /login");
+  const {username, password} = req.body;
+
+  // consultar o usuario no banco de dados
+  const query = "SELECT * FROM users WHERE username = ? AND password = ?";
+  db.get(query, [username, password], (err, row) => {
+    if(err) throw err;
+
+    //Se usuário válido .> registra a sessão e redireciona para o dashboard
+if (row) {
+  req.session.loggedin = true;
+  req.session.username = username;
+  res.redirect("/dashboard");
+}   //Se não, envia mensagem de erro (Usuário inválido)
+else {
+  res.send("Usuário inválido.");
+}
+  })
+  
   res.send("Login ainda não implementado");
 });
+
 
 app.get("/cadastro", (req, res) => {
   console.log("GET /cadastro");
@@ -118,11 +146,13 @@ app.post("/cadastro", (req, res) => {
   });
 });
 
+
 app.get("/dashboard", (req, res) => {
   console.log("GET /dashboard");
   res.render("pages/dashboard", config);
 });
-//app.listen() deve ser o último comando da aplicação (app.js)
+
+// app.listen() deve ser o último comando da aplicação (app.js)
 app.listen(port, () => {
   console.log(`Servidor sendo executado na porta ${port}!`);
 });
