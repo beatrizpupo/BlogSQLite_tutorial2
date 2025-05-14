@@ -56,6 +56,7 @@ app.get("/", (req, res) => {
   console.log("GET /index");
   config = { titulo: "blog da turma I2HNA -SESI Nova Odessa", rodape: "" }
   res.render("pages/index", config)
+  res.render("pages/index", {...config, req: req});
   // res.redirect("/cadastro"); // Redireciona para a ROTA cadastro
 });
 
@@ -63,12 +64,14 @@ app.get("/sobre", (req, res) => {
   console.log("GET /sobre");
   config = { titulo: "blog da turma I2HNA -SESI Nova Odessa", rodape: "" }
   res.render("pages/sobre", config)
+  res.render("pages/index", {...config, req: req});
 });
 
 app.get("/login", (req, res) => {
   console.log("GET /login");
   config = { titulo: "blog da turma I2HNA -SESI Nova Odessa", rodape: "" }
   res.render("pages/login", config)
+  res.render("pages/index", {...config, req: req});
 });
 
 app.post("/login", (req, res) => {
@@ -157,4 +160,9 @@ app.listen(port, () => {
   console.log(`Servidor sendo executado na porta ${port}!`);
 });
 
-//testeeee
+app.get("/logout", (req, res) => {
+  // Exemplo de uma rota (END POINT) controlado pela sessão do usuário logado.
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
+});
